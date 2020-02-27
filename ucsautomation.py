@@ -24,8 +24,6 @@ from ucsmsdk.mometa.fabric.FabricPooledVlan import FabricPooledVlan
 from ucsmsdk.mometa.fabric.FabricVlan import FabricVlan
 from ucsmsdk.mometa.fabric.FabricEthVlanPc import FabricEthVlanPc
 
-LOCAL_DIR = os.path.dirname(__file__)
-
 
 class Controller:
     def __init__(self, host, username, password):
@@ -38,11 +36,10 @@ class Controller:
         print("Local State Data Created")
 
     @classmethod
-    def load(cls, filename=LOCAL_DIR+"/config.yaml"):
+    def load(cls, filename="config.yaml"):
         import yaml
         with open(filename, 'r') as f:
             config = yaml.load(f, Loader=yaml.FullLoader)
-        print(config)
         return cls(config['host'], config['username'], config['password'])
 
     def connect(self) -> UcsHandle:
@@ -126,10 +123,13 @@ class Controller:
 
 
 def main(*args) -> int:
-    parser = argparse.ArgumentParser(prog="UCS Automation", description="A Simple UCS Automation Script")
-    parser.add_argument('vlan_id', type=str, help="VLAN ID to migrate")
-    parser.add_argument('--source', dest='source', default=None, type=str, help="A source VLAN Group")
-    parser.add_argument('--target', dest='target', default=None, type=str, help="A target VLAN Group")
+    parser = argparse.ArgumentParser(description="A Simple UCS Automation Script")
+    subparsers = parser.add_subparsers(help="Type of operation to perform")
+    sysparser = subparsers.add_parser('system', help="Perform a operation on the system")
+    vlanparser = subparsers.add_parser('vlan', help="Perform a operation on vlans")
+    vlanparser.add_argument('vlan_id', type=str, help="VLAN ID to migrate")
+    vlanparser.add_argument('--source', dest='source', default=None, type=str, help="A source VLAN Group")
+    vlanparser.add_argument('--target', dest='target', default=None, type=str, help="A target VLAN Group")
     params = parser.parse_args(args)
     controller = Controller.load()
     controller.connect()
