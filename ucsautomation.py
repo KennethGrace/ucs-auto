@@ -80,7 +80,7 @@ class Controller:
         """
         vlans = self.get_objects_state_from_class_id('fabricVlan')
         target_vlans = [vlan for vlan in vlans if vlan.id == vlan_id]
-        target_vlan_names = [vlan.name for vlan in vlans]
+        target_vlan_names = [vlan.name for vlan in target_vlans]
         vlan_groups = self.get_objects_state_from_class_id('fabricNetGroup')
         source, target = None, None
         if source_name:
