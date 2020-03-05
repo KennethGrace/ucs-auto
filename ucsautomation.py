@@ -80,6 +80,7 @@ class Controller:
         """
         vlans = self.get_objects_state_from_class_id('fabricVlan')
         target_vlans = [vlan for vlan in vlans if vlan.id == vlan_id]
+        # Oh, shit boiiiii, we found it.
         target_vlan_names = [vlan.name for vlan in vlans]
         vlan_groups = self.get_objects_state_from_class_id('fabricNetGroup')
         source, target = None, None
@@ -90,6 +91,8 @@ class Controller:
         # If there is a source vlan group, then we want to strip off all pooled vlans from that vlan group that match
         # the vlan_id, but if no source vlan group was defined, we want to remove port-channels which are bound under
         # this vlan to insure forwarding only occurs on port-channels bound to the vlan group we are migrating too.
+        # TODO: Identify why this script grabs so many vlans beyond what it should be grabbing. The error is likely in
+        #  this function.
         if source:
             group_vlans = self.handler.query_dn(source.dn, hierarchy=True)
             for groupVlan in group_vlans:
